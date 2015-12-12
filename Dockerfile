@@ -21,6 +21,7 @@ ADD apache2.conf /etc/apache2/apache2.conf
 
 EXPOSE 80
 
-VOLUME /srv/svn
+ADD start.sh  /srv/start.sh
+RUN chmod 755 /srv/start.sh
 
-CMD /etc/init.d/apache2 start | tail -f /var/log/apache2/error.log
+ENTRYPOINT ["/srv/start.sh"]
