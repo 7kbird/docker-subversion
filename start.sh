@@ -1,14 +1,13 @@
 #!/bin/bash
-EXTERNAL_APACHE_CONF="/srv/apache/config"
+APACHE_DIR="/srv/apache"
+APACHE_CONF_DIR="/srv/apache/config"
 SVN_DIR="/srv/svn"
-if [ -d "$EXTERNAL_APACHE_CONF" ] && [ "$(ls -A $EXTERNAL_APACHE_CONF)" ] ; then
-  cp -R $EXTERNAL_APACHE_CONF/* /etc/apache2/conf-enabled/
-fi
-chown -R www-data:www-data /etc/apache2
 
-if [ -d "$SVN_DIR" ] ; then
-  chown -R www-data:www-data $SVN_DIR
+if [ -d "$APACHE_CONF_DIR" ] ; then
+  ln -s $APACHE_CONF_DIR /etc/apache2/conf-enabled
 fi
+
+chown -R www-data:www-data $APACHE_DIR $SVN_DIR
 
 /usr/sbin/apache2ctl -D FOREGROUND
 tail -f /var/log/apache2/error.log
