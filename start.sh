@@ -7,7 +7,7 @@ if [ -d "$APACHE_CONF_DIR" ] ; then
   ln -s $APACHE_CONF_DIR /etc/apache2/conf-enabled
 fi
 
-chown -R www-data:www-data $APACHE_DIR $SVN_DIR
+chown -R www-data:www-data $APACHE_DIR $SVN_DIR /etc/apache2
 
 /usr/sbin/apache2ctl -D FOREGROUND
 tail -f /var/log/apache2/error.log
