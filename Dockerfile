@@ -25,4 +25,4 @@ EXPOSE 80
 ADD start.sh  /srv/start.sh
 RUN chmod 755 /srv/start.sh
 
-ENTRYPOINT ["/srv/start.sh"]
+CMD ["/srv/start.sh"]
