@@ -16,7 +16,7 @@ RUN usermod -U www-data && chsh -s /bin/bash www-data
 
 RUN a2enmod dav dav_svn perl auth_digest
 
-RUN rm -fr /var/www/html/* /etc/apache2/conf-enabled
+RUN rm -fr /var/www /etc/apache2/conf-enabled/* /etc/apache2/sites-enabled/*
 RUN mkdir -p /srv/svn /srv/apache
 ADD apache2.conf /etc/apache2/apache2.conf
 
