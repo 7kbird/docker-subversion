@@ -1,0 +1,48 @@
+#!/bin/bash
+
+## Copies configuration template to the destination as the specified USER
+# $1: copy-as user
+# $2: source file
+# $3: destination location
+# $4: mode of destination
+install_template() {
+  local SRC=${1}
+  local DEST=${2}
+  local USR_GROUP=${3}
+  local MODE=${4:-0644}
+ 
+  rm -f ${DEST}
+  cp ${SRC} ${DEST}
+  if [ "$USR_GROUP" ]; then
+    chown ${USR_GROUP} ${DEST}
+  fi
+  chmod ${MODE} ${DEST}
+}
+
+## Replace placeholders with values
+# $1: file with placeholders to replace
+# $x: placeholders to replace
+update_template() {
+  local FILE=${1?missing argument}
+  shift
+
+  [[ ! -f ${FILE} ]] && return 1
+
+  local VARIABLES=($@)
+  local USR=$(stat -c %U ${FILE})
+  local tmp_file=$(mktemp)
+  cp -a "${FILE}" ${tmp_file}
+  
+  local variable
+  for variable in ${VARIABLES[@]}; do
+    # Keep the compatibilty: {{VAR}} => ${VAR}
+    sed -ri "s/[{]{2}$variable[}]{2}/\${$variable}/g" ${tmp_file}
+  done
+
+  # Replace placeholders
+  (
+    export ${VARIABLES[@]}
+    local IFS=":"; sudo -HEu ${USR} envsubst "${VARIABLES[*]/#/$}" < ${tmp_file} > ${FILE}
+  )
+  rm -f ${tmp_file}
+}

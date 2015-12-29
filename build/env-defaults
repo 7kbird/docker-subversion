@@ -1,0 +1,14 @@
+#!/bin/bash
+APACHE_RUN_USER="www-data"
+APACHE_RUN_GROUP="www-data"
+
+SVN_APACHE_CONFIG="/etc/apache2/mods-enabled/dav_svn.conf"
+
+# EXPORTS
+SVN_PARENT_PATH=${SVN_PARENT_PATH:-/svn}
+SVN_ALIAS=${SVN_ALIAS:-/svn}
+REDMINE_DB_HOST=${REDMINE_DB_HOST:-}
+REDMINE_DB_ADAPTER=${REDMINE_DB_ADAPTER:-}  # 'mysql','postgres' or 'sqlite3' is supported
+REDMINE_DB_NAME=${REDMINE_DB_NAME:-redmine_production}
+REDMINE_DB_USER=${REDMINE_DB_USER:-redmine}
+REDMINE_DB_PASS=${REDMINE_DB_PASS:-password}

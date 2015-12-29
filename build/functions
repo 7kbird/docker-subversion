@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e
+source ${SVN_BUILD_DIR}/env-defaults
+source ${SVN_BUILD_DIR}/utils
+
+redmine_finalize_database_parameters() {
+  if [[ -n ${MYSQL_PORT_3306_TCP_ADDR} ]]; then
+    REDMINE_DB_ADAPTER=${REDMINE_DB_ADAPTER:-mysql}
+    REDMINE_DB_HOST=${REDMINE_DB_HOST:-mysql}
+  elif [[ -n ${POSTGRES_PORT_5432_TCP_ADDR} ]]; then
+    REDMINE_DB_ADAPTER=${REDMINE_DB_ADAPTER:-postgres}
+    REDMINE_DB_HOST=${REDMINE_DB_HOST:-postgres}
+  fi
+
+  case ${REDMINE_DB_ADAPTER} in
+    mysql)
+      REDMINE_MYSQL_DSN="RedmineDSN \"DBI:mysql:database=$REDMINE_DB_NAME;host=$REDMINE_DB_HOST\""
+      ;;
+    postgres)
+      REDMINE_POSTGRES_DSN="RedmineDSN \"DBI:Pg:dbname=$REDMINE_DB_NAME;host=$REDMINE_DB_HOST\""
+      ;;
+    sqlit3)
+      REDMINE_SQLITE3_DSN="RedmineDSN \"DBI:SQLite:dbname=$REDMINE_DB_NAME\""
+      ;;
+    *)
+      echo
+      echo "ERROR: "
+      echo "  Please specify the database type in use via the REDMIE_DB_ADAPTER configuration option."
+      echo "  Accepted values are \"postgres\" or \"mysql\" or \"sqlite3\". Aborting..."
+      echo
+      return 1
+      ;;
+    esac
+}
+
+config_apache_for_redmine() {
+  install_template  ${SVN_BUILD_DIR}/redmine_apache.conf ${SVN_APACHE_CONFIG} ${APACHE_RUN_GROUP}:${APACHE_RUN_USER}
+  redmine_finalize_database_parameters
+  update_template ${SVN_APACHE_CONFIG} \
+    SVN_PARENT_PATH \
+    SVN_ALIAS \
+    REDMINE_MYSQL_DSN \
+    REDMINE_POSTGRES_DSN \
+    REDMINE_SQLITE3_DSN \
+    REDMINE_DB_USER \
+    REDMINE_DB_PASS
+}
+
+config_apache() {
+  #TODO: check for Basic or Redmine
+  config_apache_for_redmine
+}
