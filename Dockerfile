@@ -9,7 +9,7 @@ RUN apt-get -y update -q
 RUN echo "#! /bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 
 # Install apache and svn
-RUN LC_ALL=C DEBIAN_FRONTEND=noninteractive apt-get install -y apache2 subversion
+RUN LC_ALL=C DEBIAN_FRONTEND=noninteractive apt-get install -y apache2 subversion curl
 
 # Install modules for access control
 RUN LC_ALL=C DEBIAN_FRONTEND=noninteractive apt-get install -y libapache2-svn libapache-dbi-perl \
